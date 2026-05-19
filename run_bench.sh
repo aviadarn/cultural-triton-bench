@@ -13,12 +13,14 @@ nvidia-smi || true
 # question: how much faster is GPU end-to-end + does parity NMI hold.
 
 echo "=== Bench deps ==="
-# datasets 4.x needs pyarrow>=21 (SageMaker base has 17). Upgrade pyarrow
-# into the conda env directly — --user can't shadow the env's preloaded
-# pyarrow on this image.
-python3 -m pip install --quiet --upgrade 'pyarrow>=21'
-python3 -m pip install --quiet 'sentence-transformers==3.0.*'
-python3 -m pip install --quiet --no-deps 'bertopic==0.16.*' 'hdbscan==0.8.*' 'umap-learn==0.5.*'
+# Earlier optimum install dragged datasets 4.x into --user site-packages,
+# which then imports against the env's pyarrow 17 and crashes on pa.json_().
+# Cleanest fix: downgrade datasets to the 2.x line that's compatible with
+# pyarrow 17, and uninstall the broken --user copy first.
+python3 -m pip uninstall -y datasets pyarrow 2>/dev/null || true
+python3 -m pip install --user --quiet 'datasets==2.21.*' 'pyarrow>=14,<18'
+python3 -m pip install --user --quiet 'sentence-transformers==3.0.*'
+python3 -m pip install --user --quiet --no-deps 'bertopic==0.16.*' 'hdbscan==0.8.*' 'umap-learn==0.5.*'
 
 echo "=== cuML (RAPIDS) for GPU UMAP + HDBSCAN ==="
 python3 -m pip install --user --quiet \
