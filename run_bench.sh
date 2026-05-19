@@ -8,7 +8,7 @@ echo "=== GPU check ==="
 nvidia-smi || true
 
 echo "=== ONNX export deps ==="
-python3 -m pip install --user --quiet "optimum[exporters]==1.21.*" "sentence-transformers==3.0.*"
+python3 -m pip install --user --quiet "optimum[exporters]==1.21.*" "sentence-transformers==3.0.*" onnxscript onnx
 
 echo "=== ONNX export ==="
 bash scripts/export_minilm_onnx.sh
