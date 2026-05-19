@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+bench/synthetic_*.jsonl
+bench/bench_*.json
+bench/sweep_*.json
+bench/sweep_*.csv
+model_repository/minilm-onnx/1/model.onnx
+model_repository/minilm-onnx/tokenizer/

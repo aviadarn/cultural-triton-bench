@@ -1,0 +1,42 @@
+# Local Triton server for the cultural-agent GPU bench harness.
+#
+# Requires:
+#   - NVIDIA GPU + nvidia-container-toolkit on the host
+#   - `scripts/export_minilm_onnx.sh` already run so model.onnx exists
+#
+# Boot:
+#   docker compose up
+#
+# Health check:
+#   curl localhost:8000/v2/health/ready
+#
+# Notes:
+#   - cuML is installed at container boot via `pip install cuml-cu12`. First
+#     run takes ~2 min while wheels download. For Phase 2+ we should bake a
+#     custom image with RAPIDS preinstalled (decision logged in AIS-2116).
+#   - The container needs CUDA 12.x on the host (driver >= 535). g5 instances
+#     ship with this stack out of the box.
+
+services:
+  triton:
+    image: nvcr.io/nvidia/tritonserver:24.09-py3
+    container_name: cultural-triton
+    ports:
+      - "8000:8000"   # HTTP
+      - "8001:8001"   # gRPC
+      - "8002:8002"   # metrics
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all
+    volumes:
+      - ./model_repository:/models
+    environment:
+      - LD_PRELOAD=
+    entrypoint: ["/bin/bash", "-lc"]
+    command: |
+      pip install --quiet cuml-cu12==24.10.* &&
+      tritonserver --model-repository=/models --strict-model-config=false --log-info=1

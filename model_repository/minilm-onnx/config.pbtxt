@@ -1,0 +1,54 @@
+# Triton config for sentence-transformers/all-MiniLM-L6-v2 exported to ONNX
+# with mean-pooling fused inside the graph (use optimum-cli, not raw HF).
+#
+# Inputs come from the tokenizer (input_ids, attention_mask). The exported
+# graph emits a 384-d sentence embedding directly — no client-side pooling.
+
+name: "minilm-onnx"
+platform: "onnxruntime_onnx"
+max_batch_size: 128
+
+input [
+  {
+    name: "input_ids"
+    data_type: TYPE_INT64
+    dims: [-1]
+  },
+  {
+    name: "attention_mask"
+    data_type: TYPE_INT64
+    dims: [-1]
+  }
+]
+
+output [
+  {
+    name: "sentence_embedding"
+    data_type: TYPE_FP32
+    dims: [384]
+  }
+]
+
+instance_group [
+  {
+    kind: KIND_GPU
+    count: 2
+  }
+]
+
+dynamic_batching {
+  preferred_batch_size: [ 32, 64, 128 ]
+  max_queue_delay_microseconds: 2000
+}
+
+optimization {
+  execution_accelerators {
+    gpu_execution_accelerator: [
+      {
+        name: "tensorrt"
+        parameters { key: "precision_mode" value: "FP16" }
+        parameters { key: "max_workspace_size_bytes" value: "1073741824" }
+      }
+    ]
+  }
+}

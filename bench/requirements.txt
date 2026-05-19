@@ -1,0 +1,13 @@
+# Bench-harness deps. Pinned to the same major versions cultural-agent
+# uses today so CPU baseline matches production behaviour.
+sentence-transformers==3.0.*
+bertopic==0.16.*
+hdbscan==0.8.*
+umap-learn==0.5.*
+scikit-learn>=1.3,<2.0
+numpy<2.0
+pandas>=2.0
+tritonclient[http]==2.49.*
+transformers==4.44.*
+optimum[exporters]==1.21.*
+pyyaml>=6.0

@@ -1,0 +1,18 @@
+# Precision sweep — requires you to clone the `minilm-onnx` model in the
+# repo with FP32 enabled (drop the TensorRT FP16 block in config.pbtxt and
+# name it `minilm-onnx-fp32`, then wire an `ensemble-topics-fp32` chain).
+# Confirms whether FP16 + TensorRT actually buys throughput on the target
+# GPU and lets us spot accuracy regressions per precision.
+
+cpu_baseline:
+  limit: 10000
+  embedding_batch_size: 256
+
+triton_runs:
+  - name: ensemble-fp16
+    triton_model: ensemble-topics
+    limit: 10000
+
+  - name: ensemble-fp32
+    triton_model: ensemble-topics-fp32
+    limit: 10000

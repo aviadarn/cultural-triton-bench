@@ -1,0 +1,25 @@
+# Default sweep — measures Triton ensemble against CPU baseline across
+# corpus sizes. Use as a starting point. Add/remove entries freely.
+
+cpu_baseline:
+  # Used as the parity anchor. Keep this matching the smallest Triton run
+  # so NMI is meaningful (sweep skips NMI when corpus sizes differ).
+  limit: 10000
+  embedding_batch_size: 256
+  min_topic_size: null   # null → agent heuristic
+
+triton_runs:
+  - name: triton-ensemble-10k
+    triton_model: ensemble-topics
+    limit: 10000
+    max_length: 256
+
+  - name: triton-ensemble-50k
+    triton_model: ensemble-topics
+    limit: 50000
+    max_length: 256
+
+  - name: triton-ensemble-100k
+    triton_model: ensemble-topics
+    limit: 100000
+    max_length: 256

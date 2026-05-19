@@ -1,0 +1,13 @@
+# Embedding-batch-size sweep — varies the CPU baseline's encode batch
+# size to measure the embed-stage knee. Triton batch sizing lives in
+# `minilm-onnx/config.pbtxt` (preferred_batch_size + max_queue_delay) and
+# changes there require a model reload, so it's not exposed here.
+
+cpu_baseline:
+  limit: 10000
+  embedding_batch_size: 256
+
+triton_runs:
+  - name: triton-ensemble
+    triton_model: ensemble-topics
+    limit: 10000

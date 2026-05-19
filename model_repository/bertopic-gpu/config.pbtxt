@@ -1,0 +1,57 @@
+# Triton config for the GPU BERTopic stage: cuML UMAP + cuML HDBSCAN.
+#
+# Receives pre-computed sentence embeddings (output of minilm-onnx) and emits
+# integer topic labels. Probability output is optional — the cultural agent
+# uses topics only.
+
+name: "bertopic-gpu"
+backend: "python"
+max_batch_size: 0
+
+input [
+  {
+    name: "sentence_embedding"
+    data_type: TYPE_FP32
+    dims: [-1, 384]
+  }
+]
+
+output [
+  {
+    name: "topic_labels"
+    data_type: TYPE_INT32
+    dims: [-1]
+  }
+]
+
+instance_group [
+  {
+    kind: KIND_GPU
+    count: 1
+  }
+]
+
+parameters {
+  key: "umap_n_components"
+  value: { string_value: "5" }
+}
+parameters {
+  key: "umap_min_dist"
+  value: { string_value: "0.0" }
+}
+parameters {
+  key: "umap_metric"
+  value: { string_value: "cosine" }
+}
+parameters {
+  key: "hdbscan_min_cluster_size"
+  value: { string_value: "60" }
+}
+parameters {
+  key: "hdbscan_min_samples"
+  value: { string_value: "18" }
+}
+parameters {
+  key: "hdbscan_cluster_selection_method"
+  value: { string_value: "eom" }
+}
