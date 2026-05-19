@@ -13,6 +13,9 @@ nvidia-smi || true
 # question: how much faster is GPU end-to-end + does parity NMI hold.
 
 echo "=== Bench deps ==="
+# datasets 4.x needs pyarrow>=21 (SageMaker base has 17). Upgrade pyarrow
+# first so sentence-transformers + bertopic imports don't crash.
+python3 -m pip install --user --quiet --upgrade 'pyarrow>=21'
 python3 -m pip install --user --quiet 'sentence-transformers==3.0.*'
 python3 -m pip install --user --quiet --no-deps 'bertopic==0.16.*' 'hdbscan==0.8.*' 'umap-learn==0.5.*'
 
