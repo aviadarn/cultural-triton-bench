@@ -14,10 +14,11 @@ nvidia-smi || true
 
 echo "=== Bench deps ==="
 # datasets 4.x needs pyarrow>=21 (SageMaker base has 17). Upgrade pyarrow
-# first so sentence-transformers + bertopic imports don't crash.
-python3 -m pip install --user --quiet --upgrade 'pyarrow>=21'
-python3 -m pip install --user --quiet 'sentence-transformers==3.0.*'
-python3 -m pip install --user --quiet --no-deps 'bertopic==0.16.*' 'hdbscan==0.8.*' 'umap-learn==0.5.*'
+# into the conda env directly — --user can't shadow the env's preloaded
+# pyarrow on this image.
+python3 -m pip install --quiet --upgrade 'pyarrow>=21'
+python3 -m pip install --quiet 'sentence-transformers==3.0.*'
+python3 -m pip install --quiet --no-deps 'bertopic==0.16.*' 'hdbscan==0.8.*' 'umap-learn==0.5.*'
 
 echo "=== cuML (RAPIDS) for GPU UMAP + HDBSCAN ==="
 python3 -m pip install --user --quiet \
